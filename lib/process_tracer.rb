@@ -1,4 +1,4 @@
-require_relative "process_tracer/version"
+require_relative 'process_tracer/version'
 require 'colorize'
 
 module ProcessTracer
@@ -15,12 +15,13 @@ module ProcessTracer
     end
 
     @logging_pieces.each_with_index do |pieces, index|
-      readable_class = pieces[:object].to_s.gsub("#<Class:", '').gsub(">", '').gsub('.', '')
+      readable_class = pieces[:object].to_s.gsub('#<Class:', '').gsub('>', '').gsub('.', '')
       object_first_call = if pieces[:depth] < 1
         true
       else
-        last_indentation = @logging_pieces[..index].reverse.detect { |piece| piece[:depth] == pieces[:depth] -1 }
-        last_indentation_readable_class = last_indentation[:object].to_s.gsub("#<Class:", '').gsub(">", '').gsub('.', '')
+        last_indentation = @logging_pieces[..index].reverse.detect { |piece| piece[:depth] == pieces[:depth] - 1 }
+        last_indentation_readable_class = last_indentation[:object].to_s.gsub('#<Class:', '').gsub('>', '').gsub('.',
+'')
         readable_class != last_indentation_readable_class
       end
 
@@ -65,7 +66,7 @@ module ProcessTracer
         'BasicObject' => [:singleton_method_added],
       }
 
-      readable_class = trace.defined_class.to_s.gsub("#<Class:", '').gsub(">", '').gsub('.', '')
+      readable_class = trace.defined_class.to_s.gsub('#<Class:', '').gsub('>', '').gsub('.', '')
       if (match = ignore.keys.detect { |key| readable_class.match(/^#{key}.*/) })
         ignore_methods = ignore[match]
 
@@ -75,19 +76,19 @@ module ProcessTracer
       case trace.event
       when :call
         readable_params = trace.parameters.flatten & trace.binding.local_variables.flatten
-        params = readable_params.map { |n|
+        params = readable_params.map do |n|
           [n, trace.binding.local_variable_get(n)]
-        }.to_h
+        end.to_h
 
         # Always indent first child method call
         if @logging_pieces.any? && @logging_pieces.last(2).map { |piece| piece[:object] }.uniq != 1
           Private.add_depth
         end
 
-        #if @logging_pieces.empty?
+        # if @logging_pieces.empty?
         @logging_pieces << {
           object: trace.defined_class,
-          params: params,
+          params:,
           method: trace.callee_id,
           return_value: nil,
           return_value_set: false, # We could have methods return nil so track this by itself
@@ -143,13 +144,13 @@ module ProcessTracer
       @trace_depth = 0
     end
 
-    def self.trace_depth
-      @trace_depth
+    class << self
+      attr_reader :trace_depth
     end
 
     def self.logging_indentation(depth)
       running_ident = ''
-      running_ident << '  ' * ((depth || 0).abs)
+      running_ident << '  ' * (depth || 0).abs
 
       running_ident
     end

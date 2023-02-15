@@ -1,17 +1,181 @@
 AllCops:
+  UseCache: true
   TargetRubyVersion: 3.0
+  DefaultFormatter: simple
+  DisplayCopNames: true
+  ExtraDetails: true
 
-Style/StringLiterals:
+Layout/ArgumentAlignment:
+  Enabled: false
+
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
+Layout/ElseAlignment:
+  Enabled: false
+
+Layout/EndAlignment:
   Enabled: true
-  EnforcedStyle: double_quotes
+  EnforcedStyleAlignWith: start_of_line
 
-Style/StringLiteralsInInterpolation:
+Layout/DotPosition:
   Enabled: true
-  EnforcedStyle: double_quotes
+  EnforcedStyle: trailing
 
-Layout/MultilineAssignmentLayout:
-  EnforceStyle: same_line
+Layout/ExtraSpacing:
+  Enabled: true
 
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
 
-Layout/LineLength:
-  Max: 120
+Layout/TrailingWhitespace:
+  Enabled: true
+
+Layout/TrailingEmptyLines:
+  Enabled: true
+
+Layout/MultilineOperationIndentation:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/IndentationConsistency:
+  Enabled: true
+  EnforcedStyle: indented_internal_methods
+
+Layout/SpaceInLambdaLiteral:
+  Enabled: true
+  EnforcedStyle: require_space
+
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+Lint/AmbiguousRegexpLiteral:
+  Enabled: true
+
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: true
+
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/RescueException:
+  Enabled: true
+  Exclude:
+    - 'app/services/import_service/import_session.rb'
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+
+Security/YAMLLoad:
+  Enabled: true
+  Exclude:
+    - 'spec/**/*'
+    - 'app/services/erasure_service.rb'
+    - 'app/models/system_library_item.rb'
+    - 'app/services/partner_app_service.rb'
+    - 'app/services/system_message_service.rb'
+    - 'merge-partners-stage2.rb'
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/EmptyMethod:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: true
+  EnforcedStyle: slashes
+  AllowInnerSlashes: true
+
+Style/RaiseArgs:
+  Enabled: true
+  EnforcedStyle: compact
+
+Style/GuardClause:
+  Enabled: false
+
+Style/FormatString:
+  Enabled: false
+
+Style/PerlBackrefs:
+  Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/TrailingCommaInArguments:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ExponentialNotation:
+  Enabled: true
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/SlicingWithRange:
+  Enabled: true
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
+
+Style/RedundantRegexpEscape:
+  Enabled: true
+
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
