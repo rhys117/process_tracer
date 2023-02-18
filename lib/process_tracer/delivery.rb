@@ -15,7 +15,6 @@ module ProcessTracer
           end
         end
       end
-      binding.remote_pry
 
       RestClient.post(
         'localhost:3000/traces',

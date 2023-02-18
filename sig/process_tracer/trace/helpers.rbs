@@ -1,0 +1,13 @@
+module ProcessTracer
+  class Trace
+    module Helpers
+      def logging_indentation: -> String
+
+      def add_depth: -> void
+
+      def reduce_depth: -> void
+    end
+
+    def readable_class: -> String
+  end
+end

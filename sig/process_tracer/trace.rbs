@@ -1,0 +1,21 @@
+module ProcessTracer
+  class Trace
+    IGNORE_LIST: Hash[String, Symbol | Array[Symbol]]
+
+    @trace_depth: Integer
+    @logging_pieces: Array[Hash[Symbol, untyped]]
+    @start_time: DateTime
+
+    @tracer: TracePoint
+
+    def self.remote: -> void
+
+    def remote: -> void
+
+    private
+
+    def run: -> untyped
+
+    def tracer: -> TracePoint
+  end
+end
