@@ -26,7 +26,7 @@ module ProcessTracer
     end
 
     def push_to_remote
-      Delivery.push(@start_time, nested_pieces)
+      Delivery.push(nested_piece)
     end
 
     def print
@@ -49,7 +49,7 @@ module ProcessTracer
       nil
     end
 
-    def nested_pieces
+    def nested_piece
       @nested_pieces ||= begin
         pieces_copy = @logging_pieces.dup
 
@@ -57,7 +57,9 @@ module ProcessTracer
           add_next_child!(pieces_copy)
         end
 
-        pieces_copy.first
+        pieces_copy.first.merge(
+          started_at: @start_time
+        )
       end
     end
 
