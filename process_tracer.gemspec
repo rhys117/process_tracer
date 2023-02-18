@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name = 'process_tracer'
   spec.version = ProcessTracer::VERSION
   spec.authors = ['Rhys Murray']
-  spec.email = ['rhys117@gmail.com']
+  spec.email = ['contact@rhysmurray.me']
 
   spec.summary = 'Trace your method calls.'
   spec.description = 'Traces your method calls and gives clear determination of what methods and '\
@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
 
   spec.add_dependency 'colorize', '~> 0.8'
+  spec.add_dependency 'rest-client'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

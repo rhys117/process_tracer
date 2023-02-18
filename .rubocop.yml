@@ -1,6 +1,6 @@
 AllCops:
   UseCache: true
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 3.1
   DefaultFormatter: simple
   DisplayCopNames: true
   ExtraDetails: true
