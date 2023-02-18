@@ -45,7 +45,7 @@ module ProcessTracer
           return false unless match
 
           ignore_methods = IGNORE_LIST[match]
-          ignore_methods == :all ||Iignore_methods.include?(trace.callee_id)
+          ignore_methods == :all || ignore_methods.include?(trace.callee_id)
         end
     end
   end

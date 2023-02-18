@@ -25,12 +25,8 @@ module ProcessTracer
       run(&blk)
     end
 
-    def push_to_remote(&blk)
-      tracer.enable do
-        blk.call
-      end
-
-      Delivery.push(@start_time, @logging_pieces)
+    def push_to_remote
+      Delivery.push(@start_time, nested_pieces)
     end
 
     def print
