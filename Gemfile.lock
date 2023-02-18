@@ -29,9 +29,6 @@ GEM
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-remote (0.1.8)
-      pry (~> 0.9)
-      slop (~> 3.0)
     rainbow (3.1.1)
     rake (13.0.6)
     regexp_parser (2.7.0)
@@ -67,7 +64,6 @@ GEM
     rubocop-ast (1.26.0)
       parser (>= 3.2.1.0)
     ruby-progressbar (1.11.0)
-    slop (3.6.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
@@ -79,7 +75,6 @@ PLATFORMS
 DEPENDENCIES
   process_tracer!
   pry
-  pry-remote
   rake (~> 13.0)
   rest-client
   rspec (~> 3.0)

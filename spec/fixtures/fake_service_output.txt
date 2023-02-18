@@ -1,0 +1,7 @@
+FakeService.run:{:param=>"test param"} > "first own singleton operation nested method second own instantiated test param operation"
+  .first_own_method:{} > "first own"
+  SingletonOperation.run:{} > "singleton operation nested method"
+    .nested_method:{} > "nested method"
+  .second_own_method:{} > "second own"
+  InstantiatedOperation#initialize:{:param=>"test param"} > "test param"
+  InstantiatedOperation#run:{} > "instantiated test param operation"
