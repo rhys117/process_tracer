@@ -10,7 +10,7 @@ RSpec.describe ProcessTracer::Trace do
   end
 
   describe '#nested_pieces' do
-    it 'should next child pieces appropriately' do
+    it 'should nest child pieces appropriately' do
       result = default_trace.nested_pieces
 
       # First layer

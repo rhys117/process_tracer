@@ -74,6 +74,7 @@ module ProcessTracer
     private
 
       def run(&blk)
+        @nested_pieces = nil
         res = nil
 
         self.tracer.enable do
