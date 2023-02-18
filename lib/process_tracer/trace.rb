@@ -34,27 +34,19 @@ module ProcessTracer
     end
 
     def print
-      @logging_pieces.each_with_index do |pieces, index|
-        class_string = readable_class(pieces[:object])
-        object_first_call = if pieces[:depth] < 1
-          true
-        else
-          last_indentation = @logging_pieces[..index].reverse.detect { |piece| piece[:depth] == pieces[:depth] - 1 }
-          last_indentation_readable_class = last_indentation[:object].to_s.gsub('#<Class:', '').gsub('>', '').
-            gsub('.', '')
-          class_string != last_indentation_readable_class
-        end
+      @logging_pieces.each_with_index do |piece, index|
+        class_string = readable_class(piece[:object])
 
-        class_method = pieces[:object].singleton_class?
+        class_method = piece[:object].singleton_class?
         call_string = class_method ? '.' : '#'
 
-        call_string += "#{pieces[:method]}:#{pieces[:params]}"
+        call_string += "#{piece[:method]}:#{piece[:params]}"
 
-        call_and_value = "#{call_string} > #{pieces[:return_value].inspect}"
-        if object_first_call
-          puts "#{logging_indentation(pieces[:depth])}#{class_string}#{call_and_value}".colorize(:yellow)
+        call_and_value = "#{call_string} > #{piece[:return_value].inspect}"
+        if should_show_class_name?(piece, target_pieces: @logging_pieces[..index], class_string:)
+          puts "#{logging_indentation(piece[:depth])}#{class_string}#{call_and_value}".colorize(:yellow)
         else
-          puts "#{logging_indentation(pieces[:depth])}#{call_and_value}".colorize(:green)
+          puts "#{logging_indentation(piece[:depth])}#{call_and_value}".colorize(:green)
         end
       end
 

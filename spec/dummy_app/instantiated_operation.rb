@@ -1,6 +1,7 @@
 class InstantiatedOperation
   def initialize(param)
     @passed_param = param
+    run
   end
 
   def run
