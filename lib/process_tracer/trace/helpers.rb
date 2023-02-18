@@ -32,6 +32,21 @@ module ProcessTracer
 
           class_string != last_indentation_readable_class
         end
+
+        def determine_variables(trace)
+          readable_params = trace.parameters.flatten & trace.binding.local_variables.flatten
+          readable_params.map do |n|
+            [n, trace.binding.local_variable_get(n)]
+          end.to_h
+        end
+
+        def should_ignore_call?(trace)
+          match = IGNORE_LIST.keys.detect { |key| readable_class(trace.defined_class).match(/^#{key}.*/) }
+          return false unless match
+
+          ignore_methods = IGNORE_LIST[match]
+          ignore_methods == :all ||Iignore_methods.include?(trace.callee_id)
+        end
     end
   end
 end

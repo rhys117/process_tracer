@@ -53,6 +53,24 @@ module ProcessTracer
       nil
     end
 
+    def nested_pieces
+      @nested_pieces ||= begin
+        pieces_copy = @logging_pieces.dup
+
+        until pieces_copy.count == 1
+          add_next_child!(pieces_copy)
+        end
+
+        pieces_copy.first
+      end
+    end
+
+    def add_next_child!(pieces)
+      deepest_depth = pieces.map { |piece| piece[:depth] }.max
+      target_index = pieces.find_index { |piece| piece[:depth] == deepest_depth }
+      pieces[target_index - 1][:child_pieces] << pieces.delete_at(target_index)
+    end
+
     private
 
       def run(&blk)
@@ -67,27 +85,17 @@ module ProcessTracer
 
       def tracer
         @tracer ||= TracePoint.new(:call, :return) do |trace|
-          if (match = IGNORE_LIST.keys.detect { |key| readable_class(trace.defined_class).match(/^#{key}.*/) })
-            ignore_methods = IGNORE_LIST[match]
-
-            next if ignore_methods == :all || ignore_methods.include?(trace.callee_id)
-          end
+          next if should_ignore_call?(trace)
 
           case trace.event
           when :call
-            readable_params = trace.parameters.flatten & trace.binding.local_variables.flatten
-            params = readable_params.map do |n|
-              [n, trace.binding.local_variable_get(n)]
-            end.to_h
-
-            # Always indent first child method call
             if @logging_pieces.any? && @logging_pieces.last(2).map { |piece| piece[:object] }.uniq != 1
               add_depth
             end
 
             @logging_pieces << {
               object: trace.defined_class,
-              params:,
+              params: determine_variables(trace),
               method: trace.callee_id,
               return_value: nil,
               return_value_set: false,
