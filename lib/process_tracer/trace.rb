@@ -17,30 +17,31 @@ module ProcessTracer
       'BasicObject' => [:singleton_method_added],
     }.freeze
 
+    attr_reader :logging_pieces, :result
+
     def initialize(&blk)
       @logging_pieces = []
       @trace_depth = 0
       @start_time = Time.now
 
-      run(&blk)
+      @result = if blk
+        run(&blk)
+      end
     end
 
     def push_to_remote
-      Delivery.push(nested_piece)
+      Delivery.push(nested_pieces)
     end
 
     def print
       @logging_pieces.each_with_index do |piece, index|
-        class_string = readable_class(piece[:object])
-
-        class_method = piece[:object].singleton_class?
-        call_string = class_method ? '.' : '#'
+        call_string = piece[:singleton_method_call] ? '.' : '#'
 
         call_string += "#{piece[:method]}:#{piece[:params]}"
 
         call_and_value = "#{call_string} > #{piece[:return_value].inspect}"
-        if should_show_class_name?(piece, target_pieces: @logging_pieces[..index], class_string:)
-          puts "#{logging_indentation(piece[:depth])}#{class_string}#{call_and_value}".colorize(:yellow)
+        if should_show_class_name?(piece, target_pieces: @logging_pieces[..index])
+          puts "#{logging_indentation(piece[:depth])}#{piece[:readable_class]}#{call_and_value}".colorize(:yellow)
         else
           puts "#{logging_indentation(piece[:depth])}#{call_and_value}".colorize(:green)
         end
@@ -49,11 +50,11 @@ module ProcessTracer
       nil
     end
 
-    def nested_piece
+    def nested_pieces
       @nested_pieces ||= begin
         pieces_copy = @logging_pieces.dup
 
-        until pieces_copy.count == 1
+        until pieces_copy.count <= 1
           add_next_child!(pieces_copy)
         end
 
@@ -63,23 +64,31 @@ module ProcessTracer
       end
     end
 
-    def add_next_child!(pieces)
-      deepest_depth = pieces.map { |piece| piece[:depth] }.max
-      target_index = pieces.find_index { |piece| piece[:depth] == deepest_depth }
-      pieces[target_index - 1][:child_pieces] << pieces.delete_at(target_index)
+    def start
+      tracer.enable
+    end
+
+    def stop
+      tracer.disable
     end
 
     private
 
       def run(&blk)
         @nested_pieces = nil
-        res = nil
 
-        self.tracer.enable do
-          res = blk.call
-        end
+        self.tracer.enable
+        res = blk.call
+
+        self.tracer.disable
 
         res
+      end
+
+      def add_next_child!(pieces)
+        deepest_depth = pieces.map { |piece| piece[:depth] }.max
+        target_index = pieces.find_index { |piece| piece[:depth] == deepest_depth }
+        pieces[target_index - 1][:child_pieces] << pieces.delete_at(target_index)
       end
 
       def tracer
@@ -94,12 +103,14 @@ module ProcessTracer
 
             @logging_pieces << {
               object: trace.defined_class,
+              readable_class: readable_class(trace.defined_class),
+              singleton_method_call: trace.defined_class.singleton_class?,
               params: determine_variables(trace),
               method: trace.callee_id,
               return_value: nil,
               return_value_set: false,
               depth: @trace_depth,
-              child_pieces: []
+              child_pieces: [],
             }
 
             if @logging_pieces.any? && @logging_pieces.last[:object] != trace.defined_class

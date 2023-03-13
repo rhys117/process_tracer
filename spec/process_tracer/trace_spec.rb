@@ -11,7 +11,7 @@ RSpec.describe ProcessTracer::Trace do
 
   describe '#nested_pieces' do
     it 'should nest child pieces appropriately' do
-      result = default_trace.nested_pieces
+      result = default_trace.nested_piece
 
       # First layer
       expect(result[:object].to_s).to include('FakeService')

@@ -24,13 +24,13 @@ module ProcessTracer
           clazz.to_s.gsub('#<Class:', '').gsub('>', '').gsub('.', '')
         end
 
-        def should_show_class_name?(current_piece, target_pieces:, class_string:)
+        def should_show_class_name?(current_piece, target_pieces:)
           return true if current_piece[:depth] < 1
 
           last_indentation = target_pieces.reverse.detect { |piece| piece[:depth] == current_piece[:depth] - 1 }
           last_indentation_readable_class = readable_class(last_indentation[:object])
 
-          class_string != last_indentation_readable_class
+          current_piece[:readable_class] != last_indentation_readable_class
         end
 
         def determine_variables(trace)
@@ -41,6 +41,11 @@ module ProcessTracer
         end
 
         def should_ignore_call?(trace)
+          if readable_class(trace.defined_class) == 'ActionController::BasicImplicitRender'
+            @basic_implicit_render_observed = true
+          end
+          return true unless @basic_implicit_render_observed
+
           match = IGNORE_LIST.keys.detect { |key| readable_class(trace.defined_class).match(/^#{key}.*/) }
           return false unless match
 
