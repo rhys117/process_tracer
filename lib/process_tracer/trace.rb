@@ -1,8 +1,6 @@
-require_relative 'trace/helpers'
-
 module ProcessTracer
   class Trace
-    include Helpers
+    include ProcessTracer::Trace::Helpers
 
     IGNORE_LIST = {
       'Kernel' => [:class, :require, :zeitwerk_original_require],

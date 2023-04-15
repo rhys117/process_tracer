@@ -36,8 +36,7 @@ module ProcessTracer
         def determine_variables(trace)
           readable_params = trace.parameters.flatten & trace.binding.local_variables.flatten
           readable_params.map do |n|
-            # Rails.logger.debug("#{n}:#{trace.binding.local_variable_get(n)&.to_s}")
-            [n, trace.binding.local_variable_get(n)&.to_s]
+            [n, trace.binding.local_variable_get(n)]
           end.to_h
         end
 

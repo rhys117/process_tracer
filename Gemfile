@@ -14,6 +14,7 @@ gem 'rubocop', '~> 1.21'
 gem 'rest-client'
 
 gem 'pry'
+gem 'pry-remote'
 
 gem 'rails'
 gem 'redis'

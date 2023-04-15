@@ -9,6 +9,6 @@ module ProcessTracer::RailsTracing
     raise 'Only to be used in development' unless Rails.env.development?
 
     # trace.tracer.enable
-    ProcessTracer::Trace.new(&block).push_to_redis
+    ProcessTracer::LineTrace.new(&block).push_to_redis
   end
 end

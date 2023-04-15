@@ -9,8 +9,6 @@ class ProcessTracer::RedisService
         0, match: "#{key}:*"
       ).last.count
 
-      Rails.logger.info(value)
-
       connection.append(
         "#{key}:#{key_count}",
         value.to_json
