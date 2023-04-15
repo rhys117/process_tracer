@@ -1,12 +1,19 @@
 require_relative 'process_tracer/version'
+require_relative 'process_tracer/redis_service'
 require_relative 'process_tracer/trace'
-require_relative 'process_tracer/rails_controllers'
-require_relative 'process_tracer/delivery'
+require_relative 'process_tracer/rails_tracing' if defined?(Rails)
 require 'colorize'
 
 module ProcessTracer
-  def self.enable_rails_controller_tracing!
-    ActionController::BasicImplicitRender.prepend ProcessTracer::RailsControllers::Start
-    ActionDispatch::Response.prepend ProcessTracer::RailsControllers::Stop
+  def self.current_app
+    @current_app ||= begin
+      default = if defined?(Rails)
+        Rails.application.class.module_parent_name
+      else
+        'app'
+      end
+
+      ENV.fetch("PROCESS_TRACER_APP_NAME", default)
+    end
   end
 end

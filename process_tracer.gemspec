@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   # spec.add_dependency "example-gem", "~> 1.0"
 
   spec.add_dependency 'colorize', '~> 0.8'
-  spec.add_dependency 'rest-client'
+  spec.add_dependency 'redis'
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

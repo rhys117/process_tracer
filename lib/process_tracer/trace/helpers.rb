@@ -36,16 +36,12 @@ module ProcessTracer
         def determine_variables(trace)
           readable_params = trace.parameters.flatten & trace.binding.local_variables.flatten
           readable_params.map do |n|
-            [n, trace.binding.local_variable_get(n)]
+            # Rails.logger.debug("#{n}:#{trace.binding.local_variable_get(n)&.to_s}")
+            [n, trace.binding.local_variable_get(n)&.to_s]
           end.to_h
         end
 
         def should_ignore_call?(trace)
-          if readable_class(trace.defined_class) == 'ActionController::BasicImplicitRender'
-            @basic_implicit_render_observed = true
-          end
-          return true unless @basic_implicit_render_observed
-
           match = IGNORE_LIST.keys.detect { |key| readable_class(trace.defined_class).match(/^#{key}.*/) }
           return false unless match
 
