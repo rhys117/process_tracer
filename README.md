@@ -4,6 +4,9 @@ Leverage ruby's TracePoint class to see the exactly what code path your executio
 
 Inspired by [trailblazers](https://github.com/trailblazer/trailblazer) `wtf?` method.
 
+TODO:
+- Work out how to handle rails/gem calls so first callout shows
+
 ## Usage
 ```ruby
 trace = ProcessTracer::Trace.new { Task.perform(test: 'params') }

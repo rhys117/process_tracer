@@ -6,9 +6,8 @@ module ProcessTracer::RailsTracing
   end
 
   def trace(&block)
-    raise 'Only to be used in development' unless Rails.env.development?
+    raise 'Only intended to be used in development due to performance drawbacks.' unless Rails.env.development?
 
-    # trace.tracer.enable
-    ProcessTracer::LineTrace.new(&block).push_to_redis
+    ProcessTracer::Trace.new(&block).push_to_redis
   end
 end
