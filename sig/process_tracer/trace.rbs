@@ -4,9 +4,16 @@ module ProcessTracer
     @trace_depth: Integer
     @logging_pieces: Array[Hash[Symbol, untyped]]
     @start_time: Time
+    @within_library_call: bool
 
     @tracer: TracePoint
 
+    def initialize: (mode: Symbol) -> void
+
     def tracer: -> TracePoint
+
+    private
+
+    def add_next_child!: (Array[Hash[Symbol, untyped]]) -> void
   end
 end

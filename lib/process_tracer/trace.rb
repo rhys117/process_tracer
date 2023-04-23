@@ -8,7 +8,8 @@ module ProcessTracer
       @logging_pieces = []
       @trace_depth = 0
       @start_time = Time.now
-      @mode = mode # TODO: Figure out how to include some first calls to rails/gem methods
+      @mode = mode
+      @within_library_call = false # will flip true the first time it's checked
 
       @result = if blk
         tracer.enable do
@@ -61,11 +62,26 @@ module ProcessTracer
       end
     end
 
+    def within_library_call?
+      @within_library_call
+    end
+
     def tracer
       @tracer ||= TracePoint.new(:line, :return) do |trace|
         next unless trace.defined_class
-        # Only filter for methods that you've defined in the rails application
-        next if @mode == :own_defs && !trace.path.include?(Rails.application.root.to_s)
+        next if readable_class(trace.defined_class) == 'ProcessTracer::Trace'
+
+        # Only filter for methods that you've defined in the rails application and first call to external libraries
+        if @mode == :own_defs
+          executing_project_defined_code = trace.path.include?(Rails.application.root.to_s)
+
+          # TODO: remove the rails dependency here
+          if @within_library_call && !executing_project_defined_code
+            next
+          end
+
+          @within_library_call = !executing_project_defined_code
+        end
 
         details = {
           object: trace.defined_class,
@@ -87,7 +103,7 @@ module ProcessTracer
           next if last_match.present? && last_match[:lineno] < trace.lineno
 
           @logging_pieces << details.merge(lineno: trace.lineno, depth: @trace_depth)
-          add_depth
+          add_depth if executing_project_defined_code
         when :return
           next unless last_match
 
@@ -96,17 +112,17 @@ module ProcessTracer
             return_value_set: true,
             params: determine_variables(trace)
           )
-          reduce_depth
+          reduce_depth if executing_project_defined_code
         end
       end
     end
 
     private
 
-    def add_next_child!(pieces)
-      deepest_depth = pieces.map { |piece| piece[:depth] }.max
-      target_index = pieces.find_index { |piece| piece[:depth] == deepest_depth }
-      pieces[target_index - 1][:child_pieces] << pieces.delete_at(target_index)
-    end
+      def add_next_child!(pieces)
+        deepest_depth = pieces.map { |piece| piece[:depth] }.max
+        target_index = pieces.find_index { |piece| piece[:depth] == deepest_depth }
+        pieces[target_index - 1][:child_pieces] << pieces.delete_at(target_index)
+      end
   end
 end
